@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. Report Action Definition -->
+    <record id="action_report_purchase_order_approval" model="ir.actions.report">
+        <field name="name">Approval Audit Certificate</field>
+        <field name="model">purchase.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_business_fields.report_purchase_order_approval_document</field>
+        <field name="report_file">custom_business_fields.report_purchase_order_approval_document</field>
+        <field name="print_report_name">'Approval_Audit_%s' % (object.name)</field>
+        <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- 2. QWeb Document Template -->
+    <template id="report_purchase_order_approval_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Header Section -->
+                        <div class="row mb-4">
+                            <div class="col-8">
+                                <h2 class="text-primary fw-bold">
+                                    <span>Purchase Order Approval Certificate</span>
+                                </h2>
+                                <h4 class="text-muted">
+                                    Document Ref: <span t-field="doc.name"/>
+                                </h4>
+                            </div>
+                            <div class="col-4 text-end">
+                                <strong>Date Printed:</strong>
+                                <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+                            </div>
+                        </div>
+
+                        <!-- Vendor & Order Overview -->
+                        <div class="row mb-4 p-3 bg-light rounded border">
+                            <div class="col-6">
+                                <strong>Vendor:</strong>
+                                <div t-field="doc.partner_id"
+                                     t-options='{"widget": "contact", "fields": ["name", "address", "phone"], "no_marker": True}'/>
+                                <div><strong>Vendor Reference:</strong> <span t-field="doc.partner_ref"/></div>
+                            </div>
+                            <div class="col-6">
+                                <div><strong>Order Date:</strong> <span t-field="doc.date_order" t-options='{"widget": "date"}'/></div>
+                                <div><strong>Order Status:</strong> <span t-field="doc.state"/></div>
+                                <div><strong>Total Amount:</strong> <span t-field="doc.amount_total" class="fw-bold"/></div>
+                            </div>
+                        </div>
+
+                        <!-- Dedicated Approval Tracking Audit Panel -->
+                        <div class="card mb-4 border-primary">
+                            <div class="card-header bg-primary text-white fw-bold">
+                                Executive Sign-Off &amp; Audit Trail
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-sm table-borderless mb-0">
+                                    <tr>
+                                        <td style="width: 25%;"><strong>Approval Tier:</strong></td>
+                                        <td style="width: 25%;">
+                                            <span class="badge bg-secondary" t-field="doc.approval_tier"/>
+                                        </td>
+                                        <td style="width: 25%;"><strong>Approved By:</strong></td>
+                                        <td style="width: 25%;">
+                                            <span class="fw-bold text-success" t-field="doc.approved_by_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Approval Timestamp:</strong></td>
+                                        <td><span t-field="doc.date_approved"/></td>
+                                        <td><strong>Credit Approved:</strong></td>
+                                        <td>
+                                            <span t-if="doc.partner_id.is_credit_approved" class="text-success fw-bold">✔ Verified</span>
+                                            <span t-else="" class="text-danger fw-bold">✖ Pending</span>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <div class="mt-3 pt-2 border-top" t-if="doc.approval_notes">
+                                    <strong>Compliance / Justification Notes:</strong>
+                                    <p class="fst-italic text-muted mt-1" t-field="doc.approval_notes"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Products Line Summary -->
+                        <h5 class="fw-bold mb-3">Order Line Items</h5>
+                        <table class="table table-bordered table-sm text-center align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="text-start">Description</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Taxes</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.order_line" t-as="line">
+                                    <tr>
+                                        <td class="text-start"><span t-field="line.name"/></td>
+                                        <td><span t-field="line.product_qty"/></td>
+                                        <td><span t-field="line.price_unit"/></td>
+                                        <td><span t-field="line.tax_ids" widget="many2many_tags"/></td>
+                                        <td class="text-end"><span t-field="line.price_subtotal"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- Order Total Breakdown -->
+                        <div class="row justify-content-end">
+                            <div class="col-5">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td><strong>Untaxed Amount:</strong></td>
+                                        <td class="text-end"><span t-field="doc.amount_untaxed"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Taxes:</strong></td>
+                                        <td class="text-end"><span t-field="doc.amount_tax"/></td>
+                                    </tr>
+                                    <tr class="border-top border-dark">
+                                        <td><strong>Total:</strong></td>
+                                        <td class="text-end fw-bold fs-5"><span t-field="doc.amount_total"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Signature / Authorization Box -->
+                        <div class="row mt-5 pt-4">
+                            <div class="col-6 text-center">
+                                <div class="border-top pt-2 mx-4">
+                                    <strong>Procurement Officer Signature</strong>
+                                </div>
+                            </div>
+                            <div class="col-6 text-center">
+                                <div class="border-top pt-2 mx-4">
+                                    <strong>Authorized Approver Signature</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

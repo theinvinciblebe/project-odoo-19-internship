@@ -24,6 +24,7 @@ Long description of module's purpose
         # 'security/ir.model.access.csv',
         'views/res_partner_views.xml',
         'views/purchase_order_views.xml',
+        'reports/purchase_order_approval_report.xml',
     ],
     'installable': True,
     'application': True,

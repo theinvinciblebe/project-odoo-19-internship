@@ -62,7 +62,8 @@
 
             <!-- 2. (Optional) Quick Approval Badges in Header Statusbar -->
             <xpath expr="//header" position="inside">
-                <field name="approved_by_id" invisible="1"/>
+                <!-- Displays a status badge next to the statusbar -->
+                <field name="approved_by_id" widget="many2one_avatar_user" invisible="not approved_by_id"/>
             </xpath>
 
         </field>
