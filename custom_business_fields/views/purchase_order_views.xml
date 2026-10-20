@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. Form View Inheritance -->
+    <record id="view_purchase_order_form_inherit_approval" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit.approval</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Add an Approval Details notebook tab -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Approval Tracking" name="approval_tracking">
+                    <group>
+                        <group string="Audit Log">
+                            <field name="approved_by_id" widget="many2one_avatar_user"/>
+                            <field name="date_approved"/>
+                            <field name="approval_tier"/>
+                        </group>
+                        <group string="Justification">
+                            <field name="approval_notes" placeholder="Enter audit or justification notes..."/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 2. List View Inheritance -->
+    <record id="view_purchase_order_list_inherit_approval" model="ir.ui.view">
+        <field name="name">purchase.order.list.inherit.approval</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+        <field name="arch" type="xml">
+            <!-- Add tracking columns into the list view as optional fields -->
+            <xpath expr="//field[@name='state']" position="before">
+                <field name="approved_by_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="date_approved" optional="show"/>
+                <field name="approval_tier" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 3. Submenu inside Purchase -> Orders dropdown -->
+    <menuitem id="menu_purchase_order_records"
+              name="Purchase Order Records"
+              parent="purchase.menu_procurement_management"
+              action="custom_business_fields.action_custom_purchase_orders"
+              sequence="30"/>
+</odoo>

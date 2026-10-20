@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ================================================================= -->
+        <!-- DEMONSTRATION DATA (first_module)                                 -->
+        <!-- Sample demo records loaded when 'Load demo data' is enabled.      -->
+        <!-- ================================================================= -->
+
+        <!-- Sample Records (Uncomment and customize for demo datasets):
+        <record id="demo_first_module_0" model="first.module">
+            <field name="name">Sample Record 0</field>
+            <field name="value">10</field>
+            <field name="description">Sample description for demonstration.</field>
+        </record>
+        -->
+    </data>
+</odoo>

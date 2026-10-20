@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ================================================================= -->
+        <!-- WEBSITE / PORTAL QWEB TEMPLATES (first_module)                    -->
+        <!-- Used for frontend website rendering and portal routes.            -->
+        <!-- ================================================================= -->
+
+        <!-- Template Examples:
+        <template id="listing" name="First Module Listing">
+            <ul>
+                <li t-foreach="objects" t-as="object">
+                    <a t-attf-href="#{ root }/objects/#{ object.id }">
+                        <t t-esc="object.display_name"/>
+                    </a>
+                </li>
+            </ul>
+        </template>
+        -->
+    </data>
+</odoo>

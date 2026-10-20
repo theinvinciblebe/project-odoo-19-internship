@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ================================================================= -->
+        <!-- DEMONSTRATION DATA (all_module)                                    -->
+        <!-- Sample demo task records loaded when 'Load demo data' is enabled. -->
+        <!-- ================================================================= -->
+
+        <!-- Sample Records (Uncomment and customize for testing / demo datasets):
+        <record id="demo_task_record_1" model="task.record">
+            <field name="name">Initial Onboarding</field>
+            <field name="state">draft</field>
+            <field name="priority">1</field>
+            <field name="description">Welcome to the task management app.</field>
+        </record>
+        -->
+    </data>
+</odoo>

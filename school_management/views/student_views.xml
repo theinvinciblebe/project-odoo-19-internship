@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================================== -->
+    <!-- 1. STUDENT LIST VIEW                                                  -->
+    <!-- Displays a tabular overview of registered students and academic info. -->
+    <!-- ===================================================================== -->
+    <record id="view_school_student_list" model="ir.ui.view">
+        <field name="name">school.student.list</field>
+        <field name="model">school.student</field>
+        <field name="arch" type="xml">
+            <list string="Students">
+                <!-- Unique student roll identification number -->
+                <field name="roll_number"/>
+                <!-- Full name of the student -->
+                <field name="name"/>
+                <!-- Assigned classroom (Many2one relation) -->
+                <field name="classroom_id"/>
+                <!-- Computed age based on birth date -->
+                <field name="age"/>
+                <!-- Total academic score calculated from terms -->
+                <field name="total_score"/>
+                <!-- Date when the student was enrolled -->
+                <field name="admission_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ===================================================================== -->
+    <!-- 2. STUDENT FORM VIEW                                                  -->
+    <!-- Detailed profile page for viewing and editing individual student info -->
+    <!-- ===================================================================== -->
+    <record id="view_school_student_form" model="ir.ui.view">
+        <field name="name">school.student.form</field>
+        <field name="model">school.student</field>
+        <field name="arch" type="xml">
+            <form string="Student">
+                <sheet>
+                    <!-- Header Title Section: Student Name Banner -->
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. John Doe"/>
+                        </h1>
+                    </div>
+
+                    <!-- Main Information Section: 2 Groups (Personal Info & Academic Details) -->
+                    <group>
+                        <!-- Group 1: Personal Identification & Birthday -->
+                        <group string="Personal Information">
+                            <field name="roll_number"/>
+                            <field name="birth_date"/>
+                            <field name="age"/>
+                        </group>
+
+                        <!-- Group 2: School Enrollment & Class Assignment -->
+                        <group string="Academic Details">
+                            <field name="classroom_id"/>
+                            <field name="admission_date"/>
+                        </group>
+                    </group>
+
+                    <!-- Tabbed Notebook Section: Detailed Performance & Subject Enrolment -->
+                    <notebook>
+                        <!-- Tab 1: Term Evaluation & Computed Final Scores -->
+                        <page string="Grades">
+                            <group>
+                                <field name="score_term1"/>
+                                <field name="score_term2"/>
+                                <field name="total_score"/>
+                            </group>
+                        </page>
+
+                        <!-- Tab 2: Enrolled Subjects displayed with Many2many Badges -->
+                        <page string="Enrolled Subjects">
+                            <field name="subject_ids" widget="many2many_tags"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ===================================================================== -->
+    <!-- 3. STUDENT WINDOW ACTION                                              -->
+    <!-- Entry point action routing users to List and Form views of Students.  -->
+    <!-- ===================================================================== -->
+    <record id="action_school_student" model="ir.actions.act_window">
+        <field name="name">Students</field>
+        <field name="res_model">school.student</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ===================================================================== -->
+    <!-- 4. MENU NAVIGATION                                                    -->
+    <!-- School Management root menu and child submenu for Students.           -->
+    <!-- ===================================================================== -->
+    <!-- Main School Management Application Menu -->
+    <menuitem id="menu_school_root"
+              name="School Management"
+              web_icon="school_management,static/description/img.png"
+              sequence="10"/>
+
+    <!-- Submenu item pointing to Student records -->
+    <menuitem id="menu_school_students"
+              name="Students"
+              parent="menu_school_root"
+              action="action_school_student"
+              sequence="10"/>
+
+</odoo>

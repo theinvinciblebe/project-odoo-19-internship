@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Base User Group -->
+    <record id="group_purchase_request_user" model="res.groups">
+        <field name="name">Purchase Request / User</field>
+        <field name="implied_ids" eval="[Command.link(ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Approver / Manager Group -->
+    <record id="group_purchase_request_manager" model="res.groups">
+        <field name="name">Purchase Request / Approver</field>
+        <field name="implied_ids" eval="[Command.link(ref('purchase_request.group_purchase_request_user'))]"/>
+    </record>
+
+    <!-- Rule 1: Normal Users can only see/access their own requests -->
+    <record id="rule_purchase_request_personal" model="ir.rule">
+        <field name="name">Personal Purchase Requests</field>
+        <field name="model_id" ref="purchase_request.model_purchase_request"/>
+        <field name="domain_force">[('requested_by', '=', user.id)]</field>
+        <field name="groups" eval="[Command.link(ref('purchase_request.group_purchase_request_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Rule 2: Approvers/Managers can see all requests -->
+    <record id="rule_purchase_request_manager" model="ir.rule">
+        <field name="name">All Purchase Requests (Manager)</field>
+        <field name="model_id" ref="purchase_request.model_purchase_request"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[Command.link(ref('purchase_request.group_purchase_request_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Rule 3: Restrict lines based on parent request access -->
+    <record id="rule_purchase_request_line_personal" model="ir.rule">
+        <field name="name">Personal Purchase Request Lines</field>
+        <field name="model_id" ref="purchase_request.model_purchase_request_line"/>
+        <field name="domain_force">[('request_id.requested_by', '=', user.id)]</field>
+        <field name="groups" eval="[Command.link(ref('purchase_request.group_purchase_request_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="rule_purchase_request_line_manager" model="ir.rule">
+        <field name="name">All Purchase Request Lines (Manager)</field>
+        <field name="model_id" ref="purchase_request.model_purchase_request_line"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[Command.link(ref('purchase_request.group_purchase_request_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+</odoo>

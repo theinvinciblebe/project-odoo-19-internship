@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. Inherit Partner Form View -->
+    <record id="view_partner_form_inherit_custom_fields" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.custom</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='misc']" position="before">
+                <group name="custom_business_info" string="Business Profile">
+                    <field name="partner_code"/>
+                    <field name="tier_level" widget="selection"/>
+                    <field name="is_credit_approved" widget="boolean_toggle"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 2. Inherit Partner List View -->
+    <record id="view_partner_list_inherit_custom_fields" model="ir.ui.view">
+        <field name="name">res.partner.list.inherit.custom</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="before">
+                <field name="partner_code" optional="show"/>
+                <field name="tier_level" widget="badge"
+                       decoration-info="tier_level == 'standard'"
+                       decoration-warning="tier_level == 'silver'"
+                       decoration-success="tier_level in ('gold', 'vip')"
+                       optional="show"/>
+                <field name="is_credit_approved" widget="boolean_toggle" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 3. Window Action -->
+    <record id="action_custom_business_fields" model="ir.actions.act_window">
+        <field name="name">Partners &amp; Customers</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first partner record!
+            </p>
+        </field>
+    </record>
+
+    <!-- 4. Window Action for Purchase Orders -->
+    <record id="action_custom_purchase_orders" model="ir.actions.act_window">
+        <field name="name">Purchase Orders</field>
+        <field name="res_model">purchase.order</field>
+        <field name="view_mode">list,kanban,form,pivot,graph,calendar,activity</field>
+        <field name="search_view_id" ref="purchase.view_purchase_order_filter"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first purchase order!
+            </p>
+        </field>
+    </record>
+
+    <!-- 5. Standalone Top-Level Menu and Navbar Items -->
+    <menuitem id="menu_custom_business_fields_root"
+              name="Custom Business Fields"
+              web_icon="base,static/description/icon.png"
+              sequence="10"/>
+
+    <menuitem id="menu_custom_business_fields_records"
+              name="Partners &amp; Customers"
+              parent="menu_custom_business_fields_root"
+              action="action_custom_business_fields"
+              sequence="10"/>
+
+    <menuitem id="menu_custom_business_fields_purchase_orders"
+              name="Purchase Orders"
+              parent="menu_custom_business_fields_root"
+              action="action_custom_purchase_orders"
+              sequence="20"/>
+
+</odoo>

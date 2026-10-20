@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Window Action -->
+    <record id="action_purchase_request" model="ir.actions.act_window">
+        <field name="name">Purchase Requests</field>
+        <field name="res_model">purchase.request</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first purchase request!
+            </p>
+        </field>
+    </record>
+
+    <!-- Top-Level Root App (Appears directly on Home Screen) -->
+    <menuitem id="menu_purchase_request_root"
+              name="Purchase Requests"
+              web_icon="purchase_request,static/description/icon.png"
+              sequence="25"/>
+
+    <!-- Sub-menu Category -->
+    <menuitem id="menu_purchase_request_sub"
+              name="Operations"
+              parent="menu_purchase_request_root"
+              sequence="1"/>
+
+    <!-- Action Link -->
+    <menuitem id="menu_purchase_request_action"
+              name="Purchase Requests"
+              parent="menu_purchase_request_sub"
+              action="action_purchase_request"
+              sequence="1"/>
+</odoo>

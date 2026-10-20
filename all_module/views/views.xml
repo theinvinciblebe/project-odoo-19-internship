@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================= -->
+    <!-- 1. TREE / LIST VIEW: decorations, default_order, optional columns -->
+    <!-- ================================================================= -->
+    <record id="view_task_record_list" model="ir.ui.view">
+        <field name="name">task.record.list</field>
+        <field name="model">task.record</field>
+        <field name="arch" type="xml">
+            <list string="Tasks"
+                  default_order="priority desc, date_deadline asc"
+                  decoration-danger="is_overdue"
+                  decoration-warning="priority in ('2', '3')"
+                  decoration-muted="state in ('done', 'cancel')">
+                <field name="name"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
+                <field name="date_deadline" optional="show"/>
+                <field name="start_datetime" optional="hide"/>
+                <field name="is_urgent" widget="boolean_toggle" optional="hide"/>
+                <field name="total_actual_hours" string="Hours" optional="show"/>
+                <field name="is_overdue" column_invisible="True"/>
+                <field name="priority" widget="priority" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'in_progress'"
+                       decoration-success="state == 'done'"
+                       decoration-muted="state == 'cancel'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================= -->
+    <!-- 2. FORM VIEW: header/statusbar, 2-col layout, notebook & pages    -->
+    <!-- ================================================================= -->
+    <record id="view_task_record_form" model="ir.ui.view">
+        <field name="name">task.record.form</field>
+        <field name="model">task.record</field>
+        <field name="arch" type="xml">
+            <form string="Task">
+                <header>
+                    <!-- State Action Buttons -->
+                    <button name="action_start"
+                            string="Start Task"
+                            type="object"
+                            class="oe_highlight"
+                            invisible="state != 'draft'"/>
+
+                    <button name="action_done"
+                            string="Mark as Done"
+                            type="object"
+                            class="oe_highlight"
+                            invisible="state != 'in_progress'"/>
+
+                    <button name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            invisible="state in ('done', 'cancel')"/>
+
+                    <button name="action_reset_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="state != 'cancel'"/>
+
+                    <!-- Statusbar Widget -->
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,in_progress,done"
+                           options="{'clickable': '1'}"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon"
+                            title="Urgent"
+                            bg_color="text-bg-danger"
+                            invisible="not is_urgent"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="priority" widget="priority" class="me-2"/>
+                            <field name="name" placeholder="Task Title..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Assignments">
+                            <!-- User is required only when task is moved to in_progress or done -->
+                            <field name="user_id"
+                                   widget="many2one_avatar_user"
+                                   required="state in ('in_progress', 'done')"
+                                   readonly="state in ('done', 'cancel')"/>
+
+                            <field name="tag_ids"
+                                   widget="many2many_tags"
+                                   options="{'color_field': 'color'}"
+                                   readonly="state in ('done', 'cancel')"/>
+
+                            <field name="is_urgent"
+                                   widget="boolean_toggle"
+                                   readonly="state in ('done', 'cancel')"/>
+                        </group>
+                        <group string="Timeline &amp; Hours">
+                            <!-- Deadline becomes mandatory once task starts -->
+                            <field name="date_deadline"
+                                   required="state == 'in_progress'"
+                                   readonly="state in ('done', 'cancel')"/>
+
+                            <field name="start_datetime"
+                                   readonly="state in ('done', 'cancel')"/>
+
+                            <field name="total_actual_hours"
+                                   readonly="state in ('done', 'cancel')"/>
+
+                            <field name="is_overdue" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="subtasks" string="Subtasks">
+                            <field name="subtask_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="actual_hours"/>
+                                    <field name="is_completed" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page name="description" string="Description">
+                            <field name="description" placeholder="Add rich description..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================= -->
+    <!-- 3. KANBAN VIEW: quick_create, cards template with dynamic data   -->
+    <!-- ================================================================= -->
+    <record id="view_task_record_kanban" model="ir.ui.view">
+        <field name="name">task.record.kanban</field>
+        <field name="model">task.record</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" quick_create="true">
+                <field name="name"/>
+                <field name="priority"/>
+                <field name="date_deadline"/>
+                <field name="is_overdue"/>
+                <field name="user_id"/>
+                <field name="tag_ids"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-bold">
+                                <field name="name"/>
+                            </span>
+                            <field name="priority" widget="priority"/>
+                        </div>
+                        <div class="mb-1" t-if="record.tag_ids.raw_value and record.tag_ids.raw_value.length > 0">
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center small text-muted">
+                            <span t-att-class="record.is_overdue.raw_value ? 'text-danger fw-bold' : ''">
+                                <field name="date_deadline"/>
+                            </span>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ================================================================= -->
+    <!-- 4. SEARCH VIEW: custom filters & group_by presets                 -->
+    <!-- ================================================================= -->
+    <record id="view_task_record_search" model="ir.ui.view">
+        <field name="name">task.record.search</field>
+        <field name="model">task.record</field>
+        <field name="arch" type="xml">
+            <search string="Search Tasks">
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="tag_ids"/>
+                <filter string="My Tasks" name="my_tasks" domain="[('user_id', '=', uid)]"/>
+                <filter string="Urgent" name="urgent" domain="[('is_urgent', '=', True)]"/>
+                <filter string="Overdue" name="overdue"
+                        domain="[('date_deadline', '&lt;', context_today().strftime('%Y-%m-%d')), ('state', 'not in', ['done', 'cancel'])]"/>
+                <separator/>
+                <filter string="Assignee" name="group_user" context="{'group_by': 'user_id'}"/>
+                <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                <filter string="Deadline" name="group_deadline" context="{'group_by': 'date_deadline'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================= -->
+    <!-- 5. ACTIONS & APP MENUS                                            -->
+    <!-- ================================================================= -->
+    <record id="action_task_record" model="ir.actions.act_window">
+        <field name="name">My Tasks</field>
+        <field name="res_model">task.record</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_task_record_search"/>
+        <field name="context">{'search_default_my_tasks': 1}</field>
+    </record>
+
+    <menuitem id="menu_task_root" name="Tasks" web_icon="all_module,static/description/icon.png" sequence="10"/>
+    <menuitem id="menu_task_record" name="Tasks" parent="menu_task_root" action="action_task_record" sequence="10"/>
+
+</odoo>

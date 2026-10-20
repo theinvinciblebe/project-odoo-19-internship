@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================================== -->
+    <!-- 1. CLASSROOM LIST VIEW                                                -->
+    <!-- Tabular listing of classrooms/grades in the school.                   -->
+    <!-- ===================================================================== -->
+    <record id="view_school_classroom_list" model="ir.ui.view">
+        <field name="name">school.classroom.list</field>
+        <field name="model">school.classroom</field>
+        <field name="arch" type="xml">
+            <list string="Classrooms">
+                <!-- Name/Identifier of the classroom (e.g. Grade 10-A) -->
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ===================================================================== -->
+    <!-- 2. CLASSROOM FORM VIEW                                                -->
+    <!-- Detailed classroom configuration with embedded list of enrolled pupils-->
+    <!-- ===================================================================== -->
+    <record id="view_school_classroom_form" model="ir.ui.view">
+        <field name="name">school.classroom.form</field>
+        <field name="model">school.classroom</field>
+        <field name="arch" type="xml">
+            <form string="Classroom">
+                <sheet>
+                    <!-- Classroom Name Section -->
+                    <group>
+                        <field name="name" placeholder="e.g. Grade 10-A"/>
+                    </group>
+
+                    <!-- Student Roster: One2many relation displayed inline -->
+                    <notebook>
+                        <page string="Enrolled Students">
+                            <!-- Embedded table of students assigned to this classroom -->
+                            <field name="student_ids">
+                                <list>
+                                    <field name="roll_number"/>
+                                    <field name="name"/>
+                                    <field name="age"/>
+                                    <field name="total_score"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ===================================================================== -->
+    <!-- 3. CLASSROOM WINDOW ACTION                                            -->
+    <!-- Navigation action configuring available views for Classrooms.         -->
+    <!-- ===================================================================== -->
+    <record id="action_school_classroom" model="ir.actions.act_window">
+        <field name="name">Classrooms</field>
+        <field name="res_model">school.classroom</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ===================================================================== -->
+    <!-- 4. MENU NAVIGATION                                                    -->
+    <!-- Submenu item under School Management for Classroom directory.         -->
+    <!-- ===================================================================== -->
+    <menuitem id="menu_school_classrooms"
+              name="Classrooms"
+              parent="menu_school_root"
+              action="action_school_classroom"
+              sequence="20"/>
+
+</odoo>

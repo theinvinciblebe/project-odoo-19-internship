@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="email_template_purchase_request_approved" model="mail.template">
+            <field name="name">Purchase Request: Approved Notification</field>
+            <field name="model_id" ref="purchase_request.model_purchase_request"/>
+            <field name="subject">Purchase Request {{ object.name }} has been Approved</field>
+            <field name="email_from">{{ (object.assigned_approver.email or user.email or 'passup231@gmail.com') }}</field>
+            <field name="use_default_to" eval="False"/>
+            <field name="partner_to">{{ object.requested_by.partner_id.id }}</field>
+            <field name="email_to">{{ object.requested_by.email or object.requested_by.partner_id.email }}</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="description">Sent to the request creator when their purchase request is approved</field>
+            <field name="body_html" type="html">
+                <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333333;">
+                    <p>Hello <t t-out="object.requested_by.name or 'there'"/>,</p>
+                    <p>Good news! Your purchase request <strong><t t-out="object.name"/></strong> submitted on <t t-out="object.date_request"/> has been <strong>approved</strong>.</p>
+
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px;">
+                        <thead>
+                            <tr style="background-color: #f2f2f2; text-align: left;">
+                                <th style="padding: 8px; border: 1px solid #ddd;">Product</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Description</th>
+                                <th style="padding: 8px; border: 1px solid #ddd; text-align: right;">Quantity</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">UoM</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="object.line_ids" t-as="line">
+                                <tr>
+                                    <td style="padding: 8px; border: 1px solid #ddd;"><t t-out="line.product_id.display_name"/></td>
+                                    <td style="padding: 8px; border: 1px solid #ddd;"><t t-out="line.description or '-'"/></td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: right;"><t t-out="line.product_qty"/></td>
+                                    <td style="padding: 8px; border: 1px solid #ddd;"><t t-out="line.product_uom_id.name or ''"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <p>The purchasing team will proceed with generating the Request for Quotation (RFQ).</p>
+                    <p>Best regards,<br/><t t-out="user.name"/></p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

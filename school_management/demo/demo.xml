@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ================================================================= -->
+        <!-- DEMONSTRATION DATA (school_management)                            -->
+        <!-- Pre-populated sample records loaded when 'Load demo data' is      -->
+        <!-- checked during database creation or module installation in dev.   -->
+        <!-- ================================================================= -->
+
+        <!-- Sample Records (Uncomment and customize for demo / testing):
+        <record id="demo_school_classroom_1" model="school.classroom">
+            <field name="name">Grade 10-A</field>
+        </record>
+
+        <record id="demo_school_student_1" model="school.student">
+            <field name="name">Alice Smith</field>
+            <field name="roll_number">STU-1001</field>
+            <field name="birth_date">2008-04-15</field>
+            <field name="classroom_id" ref="demo_school_classroom_1"/>
+            <field name="score_term1">85</field>
+            <field name="score_term2">90</field>
+        </record>
+        -->
+    </data>
+</odoo>
