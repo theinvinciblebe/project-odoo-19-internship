@@ -26,6 +26,7 @@ Long description of module's purpose
         'views/purchase_order_views.xml',
         'views/purchase_approval_report_views.xml',
         'reports/purchase_order_approval_report.xml',
+        'wizards/purchase_approval_export_wizard_views.xml',
     ],
     'installable': True,
     'application': True,
