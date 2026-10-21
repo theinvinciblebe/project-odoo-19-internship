@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- 1. Pivot View (Multi-dimensional aggregate table) -->
+    <record id="view_purchase_approval_report_pivot" model="ir.ui.view">
+        <field name="name">purchase.approval.report.pivot</field>
+        <field name="model">purchase.approval.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Approval Analysis" sample="1">
+                <!-- Grouping Rows -->
+                <field name="approved_by_id" type="row"/>
+                <field name="date_approved" interval="month" type="row"/>
+
+                <!-- Grouping Columns -->
+                <field name="approval_tier" type="col"/>
+
+                <!-- Aggregated Measure Metrics -->
+                <field name="amount_total" type="measure"/>
+                <field name="amount_untaxed" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- 2. Graph View (Visual Charts: Bar, Line, Pie) -->
+    <record id="view_purchase_approval_report_graph" model="ir.ui.view">
+        <field name="name">purchase.approval.report.graph</field>
+        <field name="model">purchase.approval.report</field>
+        <field name="arch" type="xml">
+            <!-- Supported types: bar, line, pie. stacked="True" stacks grouped categories -->
+            <graph string="Spend by Approver" type="bar" sample="1" stacked="True">
+                <!-- X-Axis Dimension -->
+                <field name="approved_by_id"/>
+
+                <!-- Secondary Dimension / Sub-grouping -->
+                <field name="approval_tier"/>
+
+                <!-- Y-Axis Metric (Measure) -->
+                <field name="amount_total" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- 3. Search View (Filters & Pre-grouped dimensions) -->
+    <record id="view_purchase_approval_report_search" model="ir.ui.view">
+        <field name="name">purchase.approval.report.search</field>
+        <field name="model">purchase.approval.report</field>
+        <field name="arch" type="xml">
+            <search string="Search Approval Analysis">
+                <field name="purchase_order_id"/>
+                <field name="partner_id"/>
+                <field name="approved_by_id"/>
+
+                <filter string="Credit Approved" name="filter_credit_approved" domain="[('is_credit_approved', '=', True)]"/>
+
+                <group>
+                    <filter string="Approver" name="group_approver" context="{'group_by': 'approved_by_id'}"/>
+                    <filter string="Approval Tier" name="group_tier" context="{'group_by': 'approval_tier'}"/>
+                    <filter string="Vendor" name="group_vendor" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Approval Month" name="group_month" context="{'group_by': 'date_approved:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- 4. Search & Filters -->
+     <record id="view_purchase_approval_report_search" model="ir.ui.view">
+        <field name="name">purchase.approval.report.search</field>
+        <field name="model">purchase.approval.report</field>
+        <field name="arch" type="xml">
+            <search string="Search Approvals">
+                <field name="purchase_order_id"/>
+                <field name="partner_id"/>
+                <field name="approved_by_id"/>
+                <filter string="Credit Approved" name="filter_credit_approved" domain="[('is_credit_approved', '=', True)]"/>
+                <group>
+                    <filter string="Approver" name="group_approver" context="{'group_by': 'approved_by_id'}"/>
+                    <filter string="Approval Tier" name="group_tier" context="{'group_by': 'approval_tier'}"/>
+                    <filter string="Vendor" name="group_vendor" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Approval Month" name="group_month" context="{'group_by': 'date_approved:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- 5. Action -->
+    <record id="action_purchase_approval_report" model="ir.actions.act_window">
+        <field name="name">Approval Analysis</field>
+        <field name="res_model">purchase.approval.report</field>
+        <field name="view_mode">pivot,graph,list</field>
+         <field name="search_view_id" ref="view_purchase_approval_report_search"/>
+         <field name="context">{'search_default_group_approver': 1}</field>
+    </record>
+
+    <!-- 6. Menu under Purchase : Purchase → Reporting → Approval Analysis. -->
+
+    <menuitem id="menu_purchase_approval_report"
+              name="Approval Analysis"
+              parent="purchase.purchase_report_main"
+              action="action_purchase_approval_report"
+              sequence="25"/>
+
+</odoo>

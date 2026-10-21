@@ -1,2 +1,2 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_custom_business_fields_custom_business_fields,custom_business_fields.custom_business_fields,model_custom_business_fields_custom_business_fields,base.group_user,1,1,1,1
+access_purchase_approval_report_user,purchase.approval.report.user,model_purchase_approval_report,purchase.group_purchase_user,1,0,0,0

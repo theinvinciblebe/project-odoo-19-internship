@@ -21,9 +21,10 @@ Long description of module's purpose
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         'views/res_partner_views.xml',
         'views/purchase_order_views.xml',
+        'views/purchase_approval_report_views.xml',
         'reports/purchase_order_approval_report.xml',
     ],
     'installable': True,
