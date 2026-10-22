@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Window Action -->
+    <!-- Window Action for Purchase Requests -->
     <record id="action_purchase_request" model="ir.actions.act_window">
         <field name="name">Purchase Requests</field>
         <field name="res_model">purchase.request</field>
@@ -19,16 +19,50 @@
               web_icon="purchase_request,static/description/icon.png"
               sequence="25"/>
 
-    <!-- Sub-menu Category -->
+    <!-- 1. Operations Menu -->
     <menuitem id="menu_purchase_request_sub"
               name="Operations"
               parent="menu_purchase_request_root"
-              sequence="1"/>
+              sequence="10"/>
 
-    <!-- Action Link -->
+    <!-- 1.1 Action Link: Purchase Requests -->
     <menuitem id="menu_purchase_request_action"
               name="Purchase Requests"
               parent="menu_purchase_request_sub"
               action="action_purchase_request"
-              sequence="1"/>
+              sequence="10"/>
+
+    <!-- 1.2 Action Link: Purchase Orders -->
+    <menuitem id="menu_purchase_request_po_records"
+              name="Purchase Orders"
+              parent="menu_purchase_request_sub"
+              action="action_custom_purchase_orders"
+              sequence="20"/>
+
+    <!-- 2. Vendors & Partners Menu -->
+    <menuitem id="menu_purchase_request_partners"
+              name="Vendors &amp; Partners"
+              parent="menu_purchase_request_root"
+              action="action_custom_partners"
+              sequence="20"/>
+
+    <!-- 3. Reporting Menu -->
+    <menuitem id="menu_purchase_request_reporting"
+              name="Reporting"
+              parent="menu_purchase_request_root"
+              sequence="30"/>
+
+    <!-- 3.1 Approval Analysis (Pivot & Graph) -->
+    <menuitem id="menu_purchase_request_approval_report"
+              name="Approval Analysis"
+              parent="menu_purchase_request_reporting"
+              action="action_purchase_approval_report"
+              sequence="10"/>
+
+    <!-- 3.2 Export Approvals (XLSX Wizard) -->
+    <menuitem id="menu_purchase_request_approval_export_xlsx"
+              name="Export Approvals (XLSX)"
+              parent="menu_purchase_request_reporting"
+              action="action_purchase_approval_export_wizard"
+              sequence="20"/>
 </odoo>
