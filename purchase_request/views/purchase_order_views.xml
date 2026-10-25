@@ -1,15 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- 1. Form View Inheritance - Approval Tab in Notebook -->
+    <!-- 1. Form View Inheritance - Approval Tab & Smart Button -->
     <record id="view_purchase_order_form_inherit_approval" model="ir.ui.view">
         <field name="name">purchase.order.form.inherit.approval</field>
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
+            <!-- Smart Button linking back to originating Purchase Request -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_purchase_request"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-file-text-o"
+                        invisible="not purchase_request_id">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Purchase Request</span>
+                    </div>
+                </button>
+            </xpath>
+
+            <!-- Add an Approval Details notebook tab -->
             <xpath expr="//notebook" position="inside">
                 <page string="Approval Tracking" name="approval_tracking">
                     <group>
                         <group string="Audit Log">
+                            <field name="purchase_request_id" readonly="1"/>
                             <field name="approved_by_id" widget="many2one_avatar_user"/>
                             <field name="date_approved"/>
                             <field name="approval_tier"/>
@@ -30,6 +45,7 @@
         <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='state']" position="before">
+                <field name="purchase_request_id" optional="hide"/>
                 <field name="approved_by_id" widget="many2one_avatar_user" optional="show"/>
                 <field name="date_approved" optional="show"/>
                 <field name="approval_tier" optional="hide"/>

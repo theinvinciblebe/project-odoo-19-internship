@@ -51,6 +51,9 @@ class PurchaseApprovalReport(models.Model):
         string='Status',
         readonly=True,
     )
+    purchase_request_id = fields.Many2one(
+        'purchase.request', string='Originating Purchase Request', readonly=True
+    )
 
     # Metrics / Aggregated Measures
     amount_untaxed = fields.Float(string='Untaxed Total', readonly=True)
@@ -74,12 +77,13 @@ class PurchaseApprovalReport(models.Model):
                     po.date_approved AS date_approved,
                     po.date_order AS date_order,
                     po.state AS state,
+                    po.purchase_request_id AS purchase_request_id,
                     po.amount_untaxed AS amount_untaxed,
                     po.amount_tax AS amount_tax,
                     po.amount_total AS amount_total
                 FROM
                     purchase_order po
-                JOIN
+                LEFT JOIN
                     res_partner rp ON po.partner_id = rp.id
                 WHERE
                     po.approved_by_id IS NOT NULL

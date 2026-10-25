@@ -23,6 +23,8 @@
                                 <th style="padding: 8px; border: 1px solid #ddd;">Description</th>
                                 <th style="padding: 8px; border: 1px solid #ddd; text-align: right;">Quantity</th>
                                 <th style="padding: 8px; border: 1px solid #ddd;">UoM</th>
+                                <th style="padding: 8px; border: 1px solid #ddd; text-align: right;">Est. Unit Cost</th>
+                                <th style="padding: 8px; border: 1px solid #ddd; text-align: right;">Est. Subtotal</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -32,11 +34,14 @@
                                     <td style="padding: 8px; border: 1px solid #ddd;"><t t-out="line.description or '-'"/></td>
                                     <td style="padding: 8px; border: 1px solid #ddd; text-align: right;"><t t-out="line.product_qty"/></td>
                                     <td style="padding: 8px; border: 1px solid #ddd;"><t t-out="line.product_uom_id.name or ''"/></td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: right;"><t t-out="'{:,.2f}'.format(line.estimated_cost)"/></td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: right;"><t t-out="'{:,.2f}'.format(line.price_subtotal)"/></td>
                                 </tr>
                             </t>
                         </tbody>
                     </table>
 
+                    <p style="margin-top: 10px;"><strong>Estimated Total Outlay:</strong> <t t-out="'{:,.2f}'.format(object.estimated_total)"/> <t t-out="object.currency_id.name or ''"/></p>
                     <p>The purchasing team will proceed with generating the Request for Quotation (RFQ).</p>
                     <p>Best regards,<br/><t t-out="user.name"/></p>
                 </div>

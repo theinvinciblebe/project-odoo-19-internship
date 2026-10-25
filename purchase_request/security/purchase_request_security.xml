@@ -1,23 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Module Category -->
+    <record id="module_category_purchase_request" model="ir.module.category">
+        <field name="name">Purchase Requisition</field>
+        <field name="description">Manage purchase requests, approvals, and procurement workflows.</field>
+        <field name="sequence">25</field>
+    </record>
+
+    <!-- Privilege (Odoo 19 Access Rights Architecture) -->
+    <record id="res_groups_privilege_purchase_request" model="res.groups.privilege">
+        <field name="name">Purchase Request</field>
+        <field name="category_id" ref="purchase_request.module_category_purchase_request"/>
+        <field name="sequence">10</field>
+    </record>
+
     <!-- Base User Group -->
     <record id="group_purchase_request_user" model="res.groups">
-        <field name="name">Purchase Request / User</field>
-        <field name="implied_ids" eval="[Command.link(ref('base.group_user'))]"/>
+        <field name="name">User</field>
+        <field name="sequence">10</field>
+        <field name="privilege_id" ref="res_groups_privilege_purchase_request"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
     </record>
 
     <!-- Approver / Manager Group -->
     <record id="group_purchase_request_manager" model="res.groups">
-        <field name="name">Purchase Request / Approver</field>
-        <field name="implied_ids" eval="[Command.link(ref('purchase_request.group_purchase_request_user'))]"/>
+        <field name="name">Approver / Manager</field>
+        <field name="sequence">20</field>
+        <field name="privilege_id" ref="res_groups_privilege_purchase_request"/>
+        <field name="implied_ids" eval="[(4, ref('purchase_request.group_purchase_request_user'))]"/>
+        <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record>
 
-    <!-- Rule 1: Normal Users can only see/access their own requests -->
-    <record id="rule_purchase_request_personal" model="ir.rule">
-        <field name="name">Personal Purchase Requests</field>
+    <!-- Multi-Company Rule: Purchase Request (Global) -->
+    <record id="rule_purchase_request_multicompany" model="ir.rule">
+        <field name="name">Purchase Request Multi-Company</field>
         <field name="model_id" ref="purchase_request.model_purchase_request"/>
-        <field name="domain_force">[('requested_by', '=', user.id)]</field>
-        <field name="groups" eval="[Command.link(ref('purchase_request.group_purchase_request_user'))]"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <!-- Multi-Company Rule: Purchase Request Line (Global) -->
+    <record id="rule_purchase_request_line_multicompany" model="ir.rule">
+        <field name="name">Purchase Request Line Multi-Company</field>
+        <field name="model_id" ref="purchase_request.model_purchase_request_line"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|', ('request_id.company_id', '=', False), ('request_id.company_id', 'in', company_ids)]</field>
+    </record>
+
+    <!-- Rule 1: Normal Users can see/access their own requests or requests assigned to them -->
+    <record id="rule_purchase_request_personal" model="ir.rule">
+        <field name="name">Personal / Assigned Purchase Requests</field>
+        <field name="model_id" ref="purchase_request.model_purchase_request"/>
+        <field name="domain_force">['|', ('requested_by', '=', user.id), ('assigned_approver', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('purchase_request.group_purchase_request_user'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
@@ -29,7 +64,7 @@
         <field name="name">All Purchase Requests (Manager)</field>
         <field name="model_id" ref="purchase_request.model_purchase_request"/>
         <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="groups" eval="[Command.link(ref('purchase_request.group_purchase_request_manager'))]"/>
+        <field name="groups" eval="[(4, ref('purchase_request.group_purchase_request_manager'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
@@ -38,10 +73,10 @@
 
     <!-- Rule 3: Restrict lines based on parent request access -->
     <record id="rule_purchase_request_line_personal" model="ir.rule">
-        <field name="name">Personal Purchase Request Lines</field>
+        <field name="name">Personal / Assigned Purchase Request Lines</field>
         <field name="model_id" ref="purchase_request.model_purchase_request_line"/>
-        <field name="domain_force">[('request_id.requested_by', '=', user.id)]</field>
-        <field name="groups" eval="[Command.link(ref('purchase_request.group_purchase_request_user'))]"/>
+        <field name="domain_force">['|', ('request_id.requested_by', '=', user.id), ('request_id.assigned_approver', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('purchase_request.group_purchase_request_user'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
@@ -52,7 +87,7 @@
         <field name="name">All Purchase Request Lines (Manager)</field>
         <field name="model_id" ref="purchase_request.model_purchase_request_line"/>
         <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="groups" eval="[Command.link(ref('purchase_request.group_purchase_request_manager'))]"/>
+        <field name="groups" eval="[(4, ref('purchase_request.group_purchase_request_manager'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>

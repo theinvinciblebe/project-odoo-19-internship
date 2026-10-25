@@ -6,7 +6,7 @@ This repository contains custom Odoo 19 modules developed during the internship 
 
 | Module | Summary | Dependencies |
 | --- | --- | --- |
-| **`purchase_request`** | Draft &rarr; Submit &rarr; Approve workflow for purchase requests with sequence generation and approval permissions. | `base`, `purchase` |
+| **`purchase_request`** | End-to-end mini procurement workflow: Requisitions, Tiered Approvals, Vendor Intelligence, PO Generation, Audit Reports & Excel Exports. | `base`, `mail`, `purchase` |
 | **`school_management`** | School management system handling Students, Classrooms, and Subjects. | `base` |
 | **`custom_business_fields`** | Custom business field extensions on Contacts (`res.partner`) and Purchase Orders (`purchase.order`). | `base`, `contacts`, `purchase` |
 | **`all_module`** | Task tracker and weekly task implementation management. | `base` |

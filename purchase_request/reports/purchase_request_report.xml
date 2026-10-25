@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. Report Action Definition -->
+    <record id="action_report_purchase_request" model="ir.actions.report">
+        <field name="name">Purchase Requisition Slip</field>
+        <field name="model">purchase.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">purchase_request.report_purchaserequest</field>
+        <field name="report_file">purchase_request.report_purchaserequest</field>
+        <field name="print_report_name">'Requisition_%s' % (object.name)</field>
+        <field name="binding_model_id" ref="purchase_request.model_purchase_request"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- 2. Main QWeb Container -->
+    <template id="report_purchaserequest">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="purchase_request.report_purchaserequest_document"/>
+            </t>
+        </t>
+    </template>
+
+    <!-- 3. Document Template -->
+    <template id="report_purchaserequest_document">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <!-- Requisition Header -->
+                <div class="row mb-4">
+                    <div class="col-8">
+                        <h2 class="text-primary fw-bold mb-1">Internal Purchase Requisition</h2>
+                        <h4 class="text-muted">
+                            Requisition Ref: <span t-field="o.name" class="fw-bold"/>
+                        </h4>
+                    </div>
+                    <div class="col-4 text-end">
+                        <div class="mb-1">
+                            <span class="badge bg-secondary p-2 fs-6 text-uppercase" t-field="o.state"/>
+                        </div>
+                        <small class="text-muted">
+                            Printed on: <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Meta Details Card -->
+                <div class="row mb-4 p-3 bg-light rounded border">
+                    <div class="col-6">
+                        <table class="table table-sm table-borderless mb-0">
+                            <tr>
+                                <td style="width: 35%;"><strong>Requested By:</strong></td>
+                                <td><span t-field="o.requested_by.name"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Request Date:</strong></td>
+                                <td><span t-field="o.date_request"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Assigned Approver:</strong></td>
+                                <td><span t-field="o.assigned_approver.name"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-6">
+                        <table class="table table-sm table-borderless mb-0">
+                            <tr>
+                                <td style="width: 35%;"><strong>Suggested Vendor:</strong></td>
+                                <td>
+                                    <span t-if="o.partner_id" t-field="o.partner_id.name" class="fw-bold"/>
+                                    <span t-else="" class="text-muted fst-italic">Open / Unassigned</span>
+                                </td>
+                            </tr>
+                            <tr t-if="o.partner_id">
+                                <td><strong>Vendor Tier:</strong></td>
+                                <td>
+                                    <span t-field="o.partner_id.tier_level" class="text-uppercase fw-bold"/>
+                                </td>
+                            </tr>
+                            <tr t-if="o.purchase_order_id">
+                                <td><strong>Linked RFQ/PO:</strong></td>
+                                <td><span t-field="o.purchase_order_id.name" class="fw-bold text-success"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Line Items Table -->
+                <h5 class="fw-bold mb-3">Requisition Line Items</h5>
+                <table class="table table-bordered table-sm text-center align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="text-start">Product</th>
+                            <th class="text-start">Description</th>
+                            <th>Quantity</th>
+                            <th>UoM</th>
+                            <th class="text-end">Est. Unit Cost</th>
+                            <th class="text-end">Est. Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="o.line_ids" t-as="line">
+                            <tr>
+                                <td class="text-start"><span t-field="line.product_id.display_name"/></td>
+                                <td class="text-start"><span t-field="line.description"/></td>
+                                <td><span t-field="line.product_qty"/></td>
+                                <td><span t-field="line.product_uom_id.name"/></td>
+                                <td class="text-end">
+                                    <span t-field="line.estimated_cost" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                </td>
+                                <td class="text-end">
+                                    <span t-field="line.price_subtotal" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+
+                <!-- Total Summary Row -->
+                <div class="row justify-content-end mb-4">
+                    <div class="col-5">
+                        <table class="table table-sm table-borderless">
+                            <tr class="border-top border-dark">
+                                <td><strong>Total Estimated Outlay:</strong></td>
+                                <td class="text-end fw-bold fs-5">
+                                    <span t-field="o.estimated_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Business Justification / Description -->
+                <div class="mb-4 p-3 border rounded" t-if="o.description">
+                    <strong class="d-block mb-1">Business Justification / Purpose:</strong>
+                    <p class="mb-0 text-muted fst-italic" t-field="o.description"/>
+                </div>
+
+                <!-- Sign-off & Authorization Boxes -->
+                <div class="row mt-5 pt-4">
+                    <div class="col-6 text-center">
+                        <div class="border-top pt-2 mx-4">
+                            <strong>Requester Signature</strong>
+                            <p class="small text-muted mb-0"><span t-field="o.requested_by.name"/></p>
+                        </div>
+                    </div>
+                    <div class="col-6 text-center">
+                        <div class="border-top pt-2 mx-4">
+                            <strong>Approver Authorization</strong>
+                            <p class="small text-muted mb-0"><span t-field="o.assigned_approver.name"/></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </t>
+    </template>
+</odoo>
