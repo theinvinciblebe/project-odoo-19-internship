@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Action -->
+    <record id="action_report_procurement_order_approval" model="ir.actions.report">
+        <field name="name">PO Approval Audit Certificate</field>
+        <field name="model">purchase.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">mini_procurement.report_purchase_order_approval</field>
+        <field name="report_file">mini_procurement.report_purchase_order_approval</field>
+        <field name="print_report_name">'PO_Approval_Certificate_' + (object.name or '').replace('/', '_')</field>
+        <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Document Template -->
+    <template id="report_purchase_order_approval_document">
+        <t t-call="web.external_layout">
+            <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
+            <div class="page" style="font-family: 'Segoe UI', Arial, sans-serif; color: #2C3E50; font-size: 13px;">
+
+                <!-- Header Title & Watermark / Stamp -->
+                <div class="row align-items-center mb-4 pb-2 border-bottom">
+                    <div class="col-8">
+                        <h2 class="fw-bold mb-1" style="color: #1B365D;">
+                            <span>PO Approval Audit Certificate</span>
+                        </h2>
+                        <span class="fs-5 fw-semibold text-secondary" t-field="doc.name"/>
+                    </div>
+                    <div class="col-4 text-end">
+                        <span class="badge rounded-pill px-3 py-2 fs-6 text-uppercase"
+                              style="background-color: #1B365D; color: #FFFFFF;">
+                            <i class="fa fa-shield me-1"/> VERIFIED AUDIT
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Approval Credentials Banner -->
+                <div class="card mb-4 border-0" style="background: linear-gradient(135deg, #1B365D 0%, #2A5298 100%); color: #FFFFFF; border-radius: 8px;">
+                    <div class="card-body p-3">
+                        <div class="row align-items-center">
+                            <div class="col-6">
+                                <span class="text-uppercase small" style="color: #CBD5E1;">Approval Status</span>
+                                <h4 class="fw-bold mb-0 text-white">OFFICIALLY CONFIRMED</h4>
+                            </div>
+                            <div class="col-6 text-end">
+                                <span class="text-uppercase small" style="color: #CBD5E1;">Assigned Tier</span>
+                                <h4 class="fw-bold mb-0 text-warning">
+                                    <t t-esc="dict(doc._fields['approval_tier'].selection).get(doc.approval_tier) or 'Standard'"/>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Metadata Grid -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="p-3 border rounded bg-light">
+                            <h6 class="fw-bold text-muted mb-2">Order &amp; Supplier Profile</h6>
+                            <table class="table table-sm table-borderless mb-0">
+                                <tr>
+                                    <td class="text-muted" style="width: 40%;">Vendor Name:</td>
+                                    <td><strong t-field="doc.partner_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Origin Requisition:</td>
+                                    <td><span t-field="doc.procurement_request_id.name" t-if="doc.procurement_request_id"/>
+                                        <span t-if="not doc.procurement_request_id">-</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Order Date:</td>
+                                    <td><span t-field="doc.date_order"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 border rounded bg-light">
+                            <h6 class="fw-bold text-muted mb-2">Executive Sign-Off Stamp</h6>
+                            <table class="table table-sm table-borderless mb-0">
+                                <tr>
+                                    <td class="text-muted" style="width: 45%;">Approved By:</td>
+                                    <td><strong t-field="doc.approved_by_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Approval Timestamp:</td>
+                                    <td><span t-field="doc.date_approved"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Total Commitment:</td>
+                                    <td><strong class="text-primary" t-field="doc.amount_total" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PO Lines Summary -->
+                <h5 class="fw-bold mb-2" style="color: #1B365D;">Ordered Items</h5>
+                <table class="table table-sm table-striped align-middle mb-3" style="border: 1px solid #E2E8F0;">
+                    <thead style="background-color: #1B365D; color: #FFFFFF;">
+                        <tr>
+                            <th style="width: 45%;">Description</th>
+                            <th class="text-end" style="width: 15%;">Quantity</th>
+                            <th class="text-end" style="width: 20%;">Unit Price</th>
+                            <th class="text-end" style="width: 20%;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="doc.order_line" t-as="line">
+                            <td>
+                                <span t-field="line.name"/>
+                            </td>
+                            <td class="text-end">
+                                <span t-field="line.product_qty"/>
+                            </td>
+                            <td class="text-end">
+                                <span t-field="line.price_unit" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            </td>
+                            <td class="text-end fw-bold">
+                                <span t-field="line.price_subtotal" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="row justify-content-end mb-4">
+                    <div class="col-5">
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td>Untaxed Total:</td>
+                                <td class="text-end"><span t-field="doc.amount_untaxed" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                            </tr>
+                            <tr>
+                                <td>Taxes:</td>
+                                <td class="text-end"><span t-field="doc.amount_tax" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                            </tr>
+                            <tr style="background-color: #F8FAFC;">
+                                <td class="fw-bold">Total Outlay:</td>
+                                <td class="text-end fw-bold fs-5 text-primary"><span t-field="doc.amount_total" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Sign-off Block -->
+                <div class="row mt-5 pt-4">
+                    <div class="col-6 text-center">
+                        <div class="border-top pt-2 mx-4">
+                            <strong>Approving Executive:</strong><br/>
+                            <span t-field="doc.approved_by_id.name"/><br/>
+                            <small class="text-muted">Digital Verification Certified</small>
+                        </div>
+                    </div>
+                    <div class="col-6 text-center">
+                        <div class="border-top pt-2 mx-4">
+                            <strong>Internal Audit:</strong><br/>
+                            <span>Procurement Compliance Office</span><br/>
+                            <small class="text-muted">Archived for Fiscal Review</small>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </t>
+    </template>
+
+    <!-- Master Template Wrapper -->
+    <template id="report_purchase_order_approval">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="mini_procurement.report_purchase_order_approval_document" t-lang="doc.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- 1. Sequence Definition for Procurement Request -->
+        <record id="seq_procurement_request" model="ir.sequence">
+            <field name="name">Procurement Request Sequence</field>
+            <field name="code">procurement.request</field>
+            <field name="prefix">PR/%(range_year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- 2. Email Template for Approved Procurement Request -->
+        <record id="email_template_procurement_request_approved" model="mail.template">
+            <field name="name">Procurement Request: Approved</field>
+            <field name="model_id" ref="mini_procurement.model_procurement_request"/>
+            <field name="subject">Procurement Request {{ object.name }} Approved</field>
+            <field name="email_from">{{ (object.assigned_approver.email_formatted or user.email_formatted or '') }}</field>
+            <field name="email_to">{{ (object.requested_by.email_formatted or '') }}</field>
+            <field name="description">Automatic transactional email dispatched to requester upon manager approval.</field>
+            <field name="body_html" type="html">
+<div style="font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; color: #2C3E50; max-width: 600px; margin: 0 auto; border: 1px solid #E2E8F0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+    <div style="background-color: #1B365D; padding: 20px; color: #FFFFFF;">
+        <h2 style="margin: 0; font-size: 20px; font-weight: 600;">Procurement Request Approved</h2>
+        <p style="margin: 5px 0 0; font-size: 13px; color: #CBD5E1;">Requisition Reference: <strong style="color: #FFFFFF;" t-out="object.name or ''">PR/2026/0001</strong></p>
+    </div>
+    <div style="padding: 24px; background-color: #FFFFFF;">
+        <p>Dear <strong t-out="object.requested_by.name or 'Colleague'">Colleague</strong>,</p>
+        <p>Your procurement request has been officially reviewed and <strong style="color: #16A34A;">APPROVED</strong> by <strong t-out="object.assigned_approver.name or user.name">Approver</strong>.</p>
+        
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px;">
+            <tr style="border-bottom: 1px solid #E2E8F0;">
+                <td style="padding: 8px 0; color: #64748B;">Request Date:</td>
+                <td style="padding: 8px 0; font-weight: 600; text-align: right;" t-out="object.date_request or ''">2026-10-26</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #E2E8F0;" t-if="object.partner_id">
+                <td style="padding: 8px 0; color: #64748B;">Suggested Vendor:</td>
+                <td style="padding: 8px 0; font-weight: 600; text-align: right;" t-out="object.partner_id.name or ''">Global Vendor</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #E2E8F0;">
+                <td style="padding: 8px 0; color: #64748B;">Total Estimated Value:</td>
+                <td style="padding: 8px 0; font-weight: 700; color: #1B365D; text-align: right;" t-out="format_amount(object.estimated_total, object.currency_id) or ''">$ 0.00</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #E2E8F0;" t-if="object.description">
+                <td style="padding: 8px 0; color: #64748B;">Justification:</td>
+                <td style="padding: 8px 0; text-align: right;" t-out="object.description or ''">-</td>
+            </tr>
+        </table>
+
+        <div style="margin: 24px 0 10px; text-align: center;">
+            <a t-att-href="'/web#id=%s&amp;model=procurement.request&amp;view_type=form' % object.id" 
+               style="background-color: #1B365D; color: #FFFFFF; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; display: inline-block;">
+                View Procurement Request
+            </a>
+        </div>
+    </div>
+    <div style="background-color: #F8FAFC; padding: 14px 24px; font-size: 12px; color: #94A3B8; text-align: center; border-top: 1px solid #E2E8F0;">
+        Automated notification sent via Mini Procurement Workflow System.
+    </div>
+</div>
+            </field>
+        </record>
+    </data>
+</odoo>

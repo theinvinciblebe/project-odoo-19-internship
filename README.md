@@ -5,7 +5,7 @@ This repository contains custom Odoo 19 modules developed during the internship 
 ## Modules Overview
 
 | Module | Summary | Dependencies |
-| --- | --- | --- |
+| **`mini_procurement`** | End-to-end Mini Procurement workflow: Requisitions, Tiered Approvals, Vendor Intelligence, PO Generation, QWeb PDF Reports, SQL Analytics & XLSX Exports. | `base`, `mail`, `purchase` |
 | **`purchase_request`** | End-to-end mini procurement workflow: Requisitions, Tiered Approvals, Vendor Intelligence, PO Generation, Audit Reports & Excel Exports. | `base`, `mail`, `purchase` |
 | **`school_management`** | School management system handling Students, Classrooms, and Subjects. | `base` |
 | **`custom_business_fields`** | Custom business field extensions on Contacts (`res.partner`) and Purchase Orders (`purchase.order`). | `base`, `contacts`, `purchase` |

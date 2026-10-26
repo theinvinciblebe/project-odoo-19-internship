@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. Form View Inheritance -->
+    <record id="view_purchase_order_form_inherit_procurement" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit.procurement</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Smart button linking back to originating Procurement Request -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_procurement_request"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-shopping-cart"
+                        invisible="not procurement_request_id">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Procurement</span>
+                    </div>
+                </button>
+            </xpath>
+
+            <!-- Notebook Tab for Approval Tracking -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Procurement Approval" name="procurement_approval">
+                    <group>
+                        <group string="Requisition Link &amp; Audit">
+                            <field name="procurement_request_id" readonly="1"/>
+                            <field name="approved_by_id" widget="many2one_avatar_user" readonly="1"/>
+                            <field name="date_approved" readonly="1"/>
+                            <field name="approval_tier" readonly="1"/>
+                        </group>
+                        <group string="Audit Notes">
+                            <field name="approval_notes" placeholder="Enter procurement audit notes or justification..."/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 2. List View Inheritance -->
+    <record id="view_purchase_order_list_inherit_procurement" model="ir.ui.view">
+        <field name="name">purchase.order.list.inherit.procurement</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="before">
+                <field name="procurement_request_id" optional="hide"/>
+                <field name="approved_by_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="approval_tier" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 3. Dedicated Action for Procurement-Linked POs -->
+    <record id="action_procurement_purchase_orders" model="ir.actions.act_window">
+        <field name="name">Purchase Orders</field>
+        <field name="res_model">purchase.order</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('procurement_request_id', '!=', False)]</field>
+        <field name="context">{'create': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No purchase orders created from procurement requests yet!
+            </p>
+            <p>
+                When a procurement request is approved, click "Generate Purchase Order" to automatically create an RFQ here.
+            </p>
+        </field>
+    </record>
+</odoo>

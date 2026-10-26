@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. Module Category -->
+    <record id="module_category_mini_procurement" model="ir.module.category">
+        <field name="name">Mini Procurement</field>
+        <field name="description">Manage purchase requisitions, approval state machine, and RFQ generation.</field>
+        <field name="sequence">25</field>
+    </record>
+
+    <!-- 2. Privilege (Odoo 19 Access Rights Architecture) -->
+    <record id="res_groups_privilege_mini_procurement" model="res.groups.privilege">
+        <field name="name">Mini Procurement</field>
+        <field name="category_id" ref="mini_procurement.module_category_mini_procurement"/>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- 3. Groups -->
+    <!-- User Group (Standard Requester) -->
+    <record id="group_procurement_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="sequence">10</field>
+        <field name="privilege_id" ref="res_groups_privilege_mini_procurement"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Manager Group (Approver / Procurement Lead) -->
+    <record id="group_procurement_manager" model="res.groups">
+        <field name="name">Approver / Manager</field>
+        <field name="sequence">20</field>
+        <field name="privilege_id" ref="res_groups_privilege_mini_procurement"/>
+        <field name="implied_ids" eval="[(4, ref('mini_procurement.group_procurement_user'))]"/>
+        <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- 4. Multi-Company Rules -->
+    <record id="rule_procurement_request_multi_company" model="ir.rule">
+        <field name="name">Procurement Request: Multi-Company Isolation</field>
+        <field name="model_id" ref="mini_procurement.model_procurement_request"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="rule_procurement_request_line_multi_company" model="ir.rule">
+        <field name="name">Procurement Request Line: Multi-Company Isolation</field>
+        <field name="model_id" ref="mini_procurement.model_procurement_request_line"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <!-- 5. Record-Level Access Rules -->
+    <!-- User can see requests they requested or were assigned as approver -->
+    <record id="rule_procurement_request_user" model="ir.rule">
+        <field name="name">Procurement Request: Personal or Assigned Access</field>
+        <field name="model_id" ref="mini_procurement.model_procurement_request"/>
+        <field name="groups" eval="[(4, ref('mini_procurement.group_procurement_user'))]"/>
+        <field name="domain_force">['|', ('requested_by', '=', user.id), ('assigned_approver', '=', user.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Manager has company-wide visibility -->
+    <record id="rule_procurement_request_manager" model="ir.rule">
+        <field name="name">Procurement Request: Manager Full Access</field>
+        <field name="model_id" ref="mini_procurement.model_procurement_request"/>
+        <field name="groups" eval="[(4, ref('mini_procurement.group_procurement_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Line Personal Access for User -->
+    <record id="rule_procurement_request_line_user" model="ir.rule">
+        <field name="name">Procurement Request Line: Personal or Assigned Access</field>
+        <field name="model_id" ref="mini_procurement.model_procurement_request_line"/>
+        <field name="groups" eval="[(4, ref('mini_procurement.group_procurement_user'))]"/>
+        <field name="domain_force">['|', ('request_id.requested_by', '=', user.id), ('request_id.assigned_approver', '=', user.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Line Company Wide Access for Manager -->
+    <record id="rule_procurement_request_line_manager" model="ir.rule">
+        <field name="name">Procurement Request Line: Manager Full Access</field>
+        <field name="model_id" ref="mini_procurement.model_procurement_request_line"/>
+        <field name="groups" eval="[(4, ref('mini_procurement.group_procurement_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+</odoo>

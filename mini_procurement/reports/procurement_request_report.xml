@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Action -->
+    <record id="action_report_procurement_request" model="ir.actions.report">
+        <field name="name">Procurement Requisition Slip</field>
+        <field name="model">procurement.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">mini_procurement.report_procurement_request</field>
+        <field name="report_file">mini_procurement.report_procurement_request</field>
+        <field name="print_report_name">'Procurement_Requisition_' + (object.name or '').replace('/', '_')</field>
+        <field name="binding_model_id" ref="model_procurement_request"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Document Template -->
+    <template id="report_procurement_request_document">
+        <t t-call="web.external_layout">
+            <t t-set="doc" t-value="doc.with_context(lang=doc.requested_by.lang)"/>
+            <div class="page" style="font-family: 'Segoe UI', Arial, sans-serif; color: #2C3E50; font-size: 13px;">
+
+                <!-- Header Title & Status -->
+                <div class="row align-items-center mb-4 pb-2 border-bottom">
+                    <div class="col-8">
+                        <h2 class="fw-bold mb-1" style="color: #1B365D;">
+                            <span>Procurement Requisition Slip</span>
+                        </h2>
+                        <span class="fs-5 fw-semibold text-secondary" t-field="doc.name"/>
+                    </div>
+                    <div class="col-4 text-end">
+                        <span class="badge rounded-pill px-3 py-2 fs-6 text-uppercase"
+                              t-attf-style="background-color: #{
+                                  '#16A34A' if doc.state == 'approved' else
+                                  '#0284C7' if doc.state == 'submitted' else
+                                  '#DC2626' if doc.state == 'rejected' else
+                                  '#64748B' if doc.state == 'draft' else '#475569'
+                              }; color: #FFFFFF;">
+                            <t t-esc="dict(doc._fields['state'].selection).get(doc.state)"/>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Requisition Metadata Grid -->
+                <div class="card mb-4 border-0 shadow-sm" style="background-color: #F8FAFC; border-radius: 8px;">
+                    <div class="card-body p-3">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless mb-0">
+                                    <tr>
+                                        <td class="text-muted" style="width: 40%;"><strong>Requested By:</strong></td>
+                                        <td><span t-field="doc.requested_by.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted"><strong>Request Date:</strong></td>
+                                        <td><span t-field="doc.date_request"/></td>
+                                    </tr>
+                                    <tr t-if="doc.date_required">
+                                        <td class="text-muted"><strong>Required Date:</strong></td>
+                                        <td><span t-field="doc.date_required"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted"><strong>Priority:</strong></td>
+                                        <td><span t-field="doc.priority"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless mb-0">
+                                    <tr>
+                                        <td class="text-muted" style="width: 40%;"><strong>Assigned Approver:</strong></td>
+                                        <td><span t-field="doc.assigned_approver.name"/></td>
+                                    </tr>
+                                    <tr t-if="doc.partner_id">
+                                        <td class="text-muted"><strong>Suggested Vendor:</strong></td>
+                                        <td><span t-field="doc.partner_id.name"/></td>
+                                    </tr>
+                                    <tr t-if="doc.purchase_order_id">
+                                        <td class="text-muted"><strong>Generated PO:</strong></td>
+                                        <td><span class="fw-bold" t-field="doc.purchase_order_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted"><strong>Company:</strong></td>
+                                        <td><span t-field="doc.company_id.name"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Requisition Items Table -->
+                <h5 class="fw-bold mb-2" style="color: #1B365D;">Requested Items &amp; Specifications</h5>
+                <table class="table table-sm table-striped align-middle mb-3" style="border: 1px solid #E2E8F0;">
+                    <thead style="background-color: #1B365D; color: #FFFFFF;">
+                        <tr>
+                            <th class="text-center" style="width: 5%;">#</th>
+                            <th style="width: 35%;">Product &amp; Description</th>
+                            <th class="text-end" style="width: 15%;">Quantity</th>
+                            <th class="text-center" style="width: 15%;">UoM</th>
+                            <th class="text-end" style="width: 15%;">Estimated Cost</th>
+                            <th class="text-end" style="width: 15%;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-set="line_num" t-value="0"/>
+                        <tr t-foreach="doc.line_ids" t-as="line">
+                            <t t-set="line_num" t-value="line_num + 1"/>
+                            <td class="text-center text-muted"><t t-esc="line_num"/></td>
+                            <td>
+                                <strong t-field="line.product_id.name"/><br/>
+                                <small class="text-muted" t-field="line.name"/>
+                            </td>
+                            <td class="text-end fw-semibold">
+                                <span t-field="line.product_qty"/>
+                            </td>
+                            <td class="text-center text-muted">
+                                <span t-field="line.product_uom_id.name"/>
+                            </td>
+                            <td class="text-end">
+                                <span t-field="line.estimated_cost" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            </td>
+                            <td class="text-end fw-bold">
+                                <span t-field="line.price_subtotal" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Summary Total -->
+                <div class="row justify-content-end mb-4">
+                    <div class="col-5">
+                        <table class="table table-sm table-bordered">
+                            <tr style="background-color: #F8FAFC;">
+                                <td class="fw-bold" style="color: #1B365D;">Total Estimated Budget:</td>
+                                <td class="text-end fw-bold fs-5" style="color: #1B365D;">
+                                    <span t-field="doc.estimated_total" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Justification / Rejection Notes -->
+                <div class="mb-4" t-if="doc.description">
+                    <h6 class="fw-bold text-muted mb-1">Business Justification / Purpose:</h6>
+                    <div class="p-2 border rounded" style="background-color: #FAFAFA;">
+                        <span t-field="doc.description"/>
+                    </div>
+                </div>
+
+                <div class="mb-4 alert alert-danger p-2" t-if="doc.state == 'rejected' and doc.rejection_reason">
+                    <h6 class="fw-bold mb-1">Rejection Reason:</h6>
+                    <span t-field="doc.rejection_reason"/>
+                </div>
+
+                <!-- Dual Sign-Off Authorization Blocks -->
+                <div class="row mt-5 pt-4">
+                    <div class="col-6 text-center">
+                        <div class="border-top pt-2 mx-4">
+                            <strong>Requested By:</strong><br/>
+                            <span t-field="doc.requested_by.name"/><br/>
+                            <small class="text-muted">Signature &amp; Date</small>
+                        </div>
+                    </div>
+                    <div class="col-6 text-center">
+                        <div class="border-top pt-2 mx-4">
+                            <strong>Authorized Approver:</strong><br/>
+                            <span t-field="doc.assigned_approver.name"/><br/>
+                            <small class="text-muted">Executive Signature &amp; Date</small>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </t>
+    </template>
+
+    <!-- Master Template Wrapper -->
+    <template id="report_procurement_request">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="mini_procurement.report_procurement_request_document" t-lang="doc.requested_by.lang"/>
+            </t>
+        </t>
+    </template>
+</odoo>

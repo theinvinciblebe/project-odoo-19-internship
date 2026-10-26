@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top-level Root Menu -->
+    <menuitem id="menu_mini_procurement_root"
+              name="Mini Procurement"
+              sequence="26"/>
+
+    <!-- 1. Operations Menu -->
+    <menuitem id="menu_procurement_operations"
+              name="Operations"
+              parent="menu_mini_procurement_root"
+              sequence="10"/>
+
+    <!-- 1.1 Procurement Requests -->
+    <menuitem id="menu_procurement_request_action"
+              name="Procurement Requests"
+              parent="menu_procurement_operations"
+              action="action_procurement_request"
+              sequence="10"/>
+
+    <!-- 1.2 Purchase Orders -->
+    <menuitem id="menu_procurement_purchase_orders"
+              name="Purchase Orders"
+              parent="menu_procurement_operations"
+              action="action_procurement_purchase_orders"
+              sequence="20"/>
+
+    <!-- 2. Vendors & Partners Menu -->
+    <menuitem id="menu_procurement_vendors"
+              name="Vendors"
+              parent="menu_mini_procurement_root"
+              action="action_procurement_partners"
+              sequence="20"/>
+
+    <!-- 3. Reporting Menu -->
+    <menuitem id="menu_procurement_reporting"
+              name="Reporting"
+              parent="menu_mini_procurement_root"
+              sequence="30"/>
+
+    <!-- 3.1 Approval Analysis (Pivot & Graph) -->
+    <menuitem id="menu_procurement_approval_report"
+              name="Approval Analysis"
+              parent="menu_procurement_reporting"
+              action="action_procurement_approval_report"
+              sequence="10"/>
+
+    <!-- 3.2 Export Approvals (XLSX) -->
+    <menuitem id="menu_procurement_approval_export_xlsx"
+              name="Export Approvals (XLSX)"
+              parent="menu_procurement_reporting"
+              action="action_procurement_approval_export_wizard"
+              sequence="20"/>
+</odoo>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_procurement_approval_export_wizard_form" model="ir.ui.view">
+        <field name="name">procurement.approval.export.wizard.form</field>
+        <field name="model">procurement.approval.export.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Export Procurement Approvals (XLSX)">
+                <sheet>
+                    <div class="alert alert-info" role="alert" invisible="file_data">
+                        Choose filter criteria to extract procurement requests and approved purchase outlays into an Excel (.xlsx) spreadsheet.
+                    </div>
+                    <div class="alert alert-success" role="alert" invisible="not file_data">
+                        <i class="fa fa-check-circle"/> Your Excel report is ready! Click below to download.
+                    </div>
+
+                    <group invisible="file_data">
+                        <group string="Date Filters">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group string="Dimension Filters">
+                            <field name="state"/>
+                            <field name="assigned_approver" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
+                    <group invisible="not file_data" class="text-center my-3">
+                        <field name="filename" invisible="1"/>
+                        <field name="file_data" filename="filename" widget="binary" readonly="1" string="Excel File"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_generate_xlsx"
+                            string="Generate Spreadsheet"
+                            type="object"
+                            class="btn-primary"
+                            invisible="file_data"/>
+                    <button string="Close"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_procurement_approval_export_wizard" model="ir.actions.act_window">
+        <field name="name">Export Approvals (XLSX)</field>
+        <field name="res_model">procurement.approval.export.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
