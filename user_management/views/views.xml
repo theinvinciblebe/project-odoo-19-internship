@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- explicit list view definition -->
+        <record id="view_users_form_inherit_custom" model="ir.ui.view">
+            <field name="name">res.users.form.inherit.custom</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet" position="inside">
+                    <group string="Additional Information">
+                        <field name="department_name"/>
+                        <field name="phone_number"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_users_list_inherit_custom" model="ir.ui.view">
+            <field name="name">res.users.list.inherit.custom</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="inside">
+                    <field name="department_name"/>
+                    <field name="phone_number"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- actions opening views on models -->
+
+        <record id="action_user_management" model="ir.actions.act_window">
+            <field name="name">Users</field>
+            <field name="res_model">res.users</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first users record!
+                </p>
+            </field>
+        </record>
+
+        <!-- Top-Level Root App (Appears directly on Home Screen) -->
+        <menuitem id="menu_user_management_root"
+                  name="User Management"
+                  web_icon="user_management,static/description/icon.png"
+                  sequence="1"/>
+
+        <!-- Users Menu -->
+        <menuitem id="menu_purchase_request_partners"
+                  name="Users"
+                  parent="menu_user_management_root"
+                  action="action_user_management"
+                  sequence="20"/>
+
+
+        <!-- server action to the one above -->
+        <!--
+            <record model="ir.actions.server" id="user_management.action_server">
+              <field name="name">user_management server</field>
+              <field name="model_id" ref="model_user_management_user_management"/>
+              <field name="state">code</field>
+              <field name="code">
+                action = {
+                  "type": "ir.actions.act_window",
+                  "view_mode": "list,form",
+                  "res_model": model._name,
+                }
+              </field>
+            </record>
+        -->
+
+        <!-- Top menu item -->
+        <!--
+            <menuitem name="user_management" id="user_management.menu_root"/>
+        -->
+        <!-- menu categories -->
+        <!--
+            <menuitem name="Menu 1" id="user_management.menu_1" parent="user_management.menu_root"/>
+            <menuitem name="Menu 2" id="user_management.menu_2" parent="user_management.menu_root"/>
+        -->
+        <!-- actions -->
+        <!--
+            <menuitem name="List" id="user_management.menu_1_list" parent="user_management.menu_1"
+                      action="user_management.action_window"/>
+            <menuitem name="Server to list" id="user_management" parent="user_management.menu_2"
+                      action="user_management.action_server"/>
+        -->
+    </data>
+</odoo>
