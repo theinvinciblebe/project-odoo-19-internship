@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Employee Profile List View -->
+        <record id="employee_profile_view_list" model="ir.ui.view">
+            <field name="name">employee.profile.list</field>
+            <field name="model">user.management.profile</field>
+            <field name="arch" type="xml">
+                <list string="Employee Profiles">
+                    <field name="user_id"/>
+                    <field name="department_name"/>
+                    <field name="phone_number" optional="show"/>
+                    <field name="employment_type" widget="badge"
+                           decoration-info="employment_type=='employment'"
+                           decoration-warning="employment_type=='manager'"
+                           decoration-success="employment_type=='admin'"
+                    />
+                </list>
+            </field>
+        </record>
+
+        <!-- Employee Profile Form View -->
+        <record id="employee_profile_view_form" model="ir.ui.view">
+            <field name="name">employee.profile.form</field>
+            <field name="model">user.management.profile</field>
+            <field name="arch" type="xml">
+                <form string="Employee Profile">
+                    <sheet>
+                        <group>
+                            <field name="user_avatar"
+                                   widget="image"
+                                   class="oe_avatar"/>
+                        </group>
+
+                        <group string="Employee Information">
+                            <field name="user_id"/>
+                            <field name="department_name"/>
+                            <field name="phone_number"/>
+                            <field name="employment_type"/>
+                        </group>
+
+                        <group string="Additional Information">
+                            <notebook>
+                                <page name="Note">
+                                    <field name="notes"/>
+                                </page>
+                                <page name="Description">
+                                    <field name="notes"/>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                    <!-- Chatter -->
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <!-- Employee Profile Kanban View -->
+        <record id="employee_profile_view_kanban" model="ir.ui.view">
+            <field name="name">employee.profile.kanban</field>
+            <field name="model">user.management.profile</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <templates>
+                        <t t-name="card">
+                            <div class="d-flex flex-column gap-2">
+                                <!-- Employee Avatar -->
+                                <aside>
+                                    <field name="user_avatar"
+                                           widget="image"
+                                           alt="User Avatar"/>
+                                </aside>
+                                <!-- Employee Name -->
+                                <strong class="fs-5">
+                                    <field name="user_id"/>
+                                </strong>
+
+                                <!-- Employment Type -->
+                                <div>
+                                    <field name="employment_type" widget="badge"
+                                           decoration-info="employment_type=='employment'"
+                                           decoration-warning="employment_type=='manager'"
+                                           decoration-success="employment_type=='admin'"
+                                    />
+                                </div>
+
+                                <!-- Department -->
+                                <div>
+                                    <span class="text-muted">Department:</span>
+                                    <field name="department_name"/>
+                                </div>
+
+                                <!-- Phone -->
+                                <div>
+                                    <span class="text-muted">Phone:</span>
+                                    <field name="phone_number"/>
+                                </div>
+
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+    </data>
+</odoo>

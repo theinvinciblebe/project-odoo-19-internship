@@ -1,20 +1,21 @@
-from odoo import models, fields, api
+from odoo import models, fields
 
 
-class user_management(models.Model):
-    _inherit = 'res.users'
+class ResUsers(models.Model):
+    _inherit = ['res.users', 'mail.thread', 'mail.activity.mixin']
 
-    # name = fields.Char(string='Name')
-    # age = fields.int(string='Age')
+    department_name = fields.Char(
+        string='Department Name',
+        tracking=True,
+    )
 
-    department_name = fields.Char(string='Department Name')
-    phone_number = fields.Char(string='Phone Number')
+    phone_number = fields.Char(
+        string='Phone Number',
+        tracking=True,
+    )
+
     employment_type = fields.Selection([
-        ('employment', 'Employment'),
+        ('employment', 'Employee'),
         ('manager', 'Manager'),
         ('admin', 'Administrator'),
-    ],string='Employment Type')
-
-
-
-
+    ], string='Employment Type', default='employment', tracking=True,)

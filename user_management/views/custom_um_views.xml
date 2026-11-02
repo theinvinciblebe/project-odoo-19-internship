@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================= -->
+    <!-- Custom User Form View         -->
+    <!-- ============================= -->
+    <record id="view_users_form_custom_management" model="ir.ui.view">
+        <field name="name">res.users.form.custom.management</field>
+        <field name="model">res.users</field>
+        <field name="arch" type="xml">
+            <form string="User Management">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="login"/>
+                        <field name="department_name"/>
+                        <field name="phone_number"/>
+                        <field name="employment_type"/>
+                    </group>
+                </sheet>
+                <!-- Modern Odoo Chatter: Activities, Log Notes, and Follower Messaging -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- ============================= -->
+    <!-- Custom User List View         -->
+    <!-- ============================= -->
+    <record id="view_users_list_custom_management" model="ir.ui.view">
+        <field name="name">res.users.list.custom.management</field>
+        <field name="model">res.users</field>
+        <field name="arch" type="xml">
+            <list string="User Management" delete="false">
+                <field name="name"/>
+                <field name="login"/>
+                <field name="department_name"/>
+                <field name="phone_number"/>
+                <field name="employment_type"/>
+            </list>
+        </field>
+    </record>
+
+
+    <!-- ============================= -->
+    <!-- Custom User Search View       -->
+    <!-- ============================= -->
+<record id="view_users_search_custom_management" model="ir.ui.view">
+    <field name="name">res.users.search.custom.management</field>
+    <field name="model">res.users</field>
+    <field name="arch" type="xml">
+        <search string="Search Users">
+
+            <!-- Search fields -->
+            <field name="name"/>
+            <field name="login"/>
+            <field name="department_name"/>
+            <field name="phone_number"/>
+            <field name="employment_type"/>
+
+            <!-- Employment filters -->
+            <filter
+                name="filter_employees"
+                string="Employees"
+                domain="[('employment_type', '=', 'employment')]"
+            />
+            <filter
+                name="filter_managers"
+                string="Managers"
+                domain="[('employment_type', '=', 'manager')]"
+            />
+            <filter
+                name="filter_administrators"
+                string="Administrators"
+                domain="[('employment_type', '=', 'admin')]"
+            />
+
+            <!-- Group By -->
+            <group>
+                <filter
+                    name="group_by_department"
+                    string="Department"
+                    context="{'group_by': 'department_name'}"
+                />
+                <filter
+                    name="group_by_employment_type"
+                    string="Employment Type"
+                    context="{'group_by': 'employment_type'}"
+                />
+            </group>
+
+        </search>
+    </field>
+</record>
+
+    <!-- ============================= -->
+    <!-- Custom User Window Action     -->
+    <!-- ============================= -->
+    <record id="action_custom_user_management" model="ir.actions.act_window">
+        <field name="name">Custom User Management</field>
+        <field name="res_model">res.users</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_users_search_custom_management"/>
+    </record>
+
+
+    <!-- Explicitly Bind the Custom List View -->
+    <record id="action_custom_user_management_list" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_users_list_custom_management"/>
+        <field name="act_window_id" ref="action_custom_user_management"/>
+    </record>
+
+
+    <!-- Explicitly Bind the Custom Form View -->
+    <record id="action_custom_user_management_form" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_users_form_custom_management"/>
+        <field name="act_window_id" ref="action_custom_user_management"/>
+    </record>
+
+</odoo>

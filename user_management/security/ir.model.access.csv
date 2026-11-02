@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_user_management_user_management,user_management.user_management,model_user_management_user_management,base.group_user,1,1,1,1
+access_res_users_custom_internal,res.users.custom.internal,base.model_res_users,base.group_user,1,0,0,0
+access_res_users_custom_admin,res.users.custom.admin,base.model_res_users,base.group_system,1,1,1,0

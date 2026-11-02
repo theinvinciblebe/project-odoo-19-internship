@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top-Level Root App (Appears directly on Home Screen) -->
+    <menuitem id="menu_user_management_root"
+              name="User Management"
+              web_icon="user_management,static/description/icon.png"
+              sequence="1"
+              groups="base.group_user"
+    />
+
+    <!-- Users Menu -->
+<!--    <menuitem id="menu_user_management_users"-->
+<!--              name="Users"-->
+<!--              parent="menu_user_management_root"-->
+<!--              action="action_user_management"-->
+<!--              sequence="2"-->
+<!--              groups="base.group_system"-->
+<!--    />-->
+
+    <!-- Custom Users Menu -->
+    <menuitem id="menu_custom_user_management_users"
+              name="Custom User"
+              parent="menu_user_management_root"
+              action="action_custom_user_management"
+              sequence="2"
+    />
+
+</odoo>

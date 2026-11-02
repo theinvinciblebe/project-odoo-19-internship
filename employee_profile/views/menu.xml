@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top-Level Root App -->
+    <menuitem id="menu_employee_profile_root"
+              name="Employee Profile App"
+              web_icon="employee_profile,static/description/icon.png"
+              sequence="1"
+    />
+
+    <!-- Windows Action -->
+    <record id="action_employee_profile_management" model="ir.actions.act_window">
+        <field name="name">Employee Profile Management</field>
+        <field name="res_model">user.management.profile</field>
+        <field name="view_mode">list,kanban,form</field>
+    </record>
+
+    <!-- Explicitly Bind Custom List View -->
+    <record id="action_employee_profile_list"
+            model="ir.actions.act_window.view">
+
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="employee_profile_view_list"/>
+        <field name="act_window_id"
+               ref="action_employee_profile_management"/>
+
+    </record>
+
+    <!-- Explicitly Bind Custom Kanban View -->
+    <record id="action_employee_profile_kanban"
+            model="ir.actions.act_window.view">
+
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="employee_profile_view_kanban"/>
+        <field name="act_window_id"
+               ref="action_employee_profile_management"/>
+
+    </record>
+
+    <menuitem id="menu_employee_profile_users"
+              name="Profile Management"
+              parent="menu_employee_profile_root"
+              action="action_employee_profile_management"
+              sequence="2"
+    />
+
+</odoo>
