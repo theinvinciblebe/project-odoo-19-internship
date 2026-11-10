@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class ProcurementRequest(models.Model):
@@ -32,6 +32,13 @@ class ProcurementRequest(models.Model):
         tracking=True,
         help='Target delivery or fulfillment date.'
     )
+
+    @api.constrains('date_required', 'date_request')
+    def _check_date_required(self):
+        for record in self:
+            if record.date_required < record.date_request :
+                raise ValidationError("The date required cannot be set in the past.")
+
 
     @api.model
     def _domain_assigned_approver(self):
