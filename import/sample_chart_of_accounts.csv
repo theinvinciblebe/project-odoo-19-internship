@@ -1,0 +1,19 @@
+﻿Code,Name,Type,Allow Reconciliation
+100000,Cash,Bank and Cash,True
+101000,Bank,Bank and Cash,True
+110000,Accounts Receivable,Receivable,True
+120000,Inventory,Current Assets,False
+130000,Prepaid Expenses,Prepayments,False
+150000,Office Equipment,Fixed Assets,False
+200000,Accounts Payable,Payable,True
+210000,Tax Payable,Current Liabilities,False
+220000,Accrued Expenses,Current Liabilities,False
+300000,Owner's Equity,Equity,False
+310000,Retained Earnings,Current Year Earnings,False
+400000,Sales Revenue,Income,False
+410000,Other Income,Other Income,False
+500000,Cost of Goods Sold,Cost of Revenue,False
+600000,Salaries Expense,Expenses,False
+610000,Rent Expense,Expenses,False
+620000,Utilities Expense,Expenses,False
+630000,Depreciation Expense,Depreciation,False

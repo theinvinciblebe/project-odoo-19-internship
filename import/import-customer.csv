@@ -1,0 +1,4 @@
+Name,Is a Company,Email,Phone,Street,City,Country,Website
+ABC Company,True,abc@gmail.com,012345678,Street 271,Phnom Penh,Cambodia,www.abc.com
+Smart Customer,False,smart@gmail.com,011222333,Street 200,Phnom Penh,Cambodia,
+Global Trading,True,global@gmail.com,023456789,Street 310,Siem Reap,Cambodia,www.global.com

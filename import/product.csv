@@ -1,0 +1,5 @@
+Name,Internal Reference,Product Type,Sales Price,Cost,Product Category,Unit of Measure,Can be Sold,Can be Purchased
+Dell Laptop,LAP001,Goods,850,700,Goods,Units,True,True
+HP Monitor,MON001,Goods,180,130,Goods,Units,True,True
+Wireless Mouse,MOU001,Goods,25,12,Goods,Units,True,True
+Web Development Service,SER001,Service,500,0,Goods,Units,True,False

@@ -1,0 +1,7 @@
+Reference,Date,Journal,Journal Items/Account,Journal Items/Debit,Journal Items/Credit,Journal Items/Label
+Opening Trial Balance,2026-11-01,Miscellaneous Operations,101000 Cash,5000,,Opening Cash
+,,,101000 Bank,10000,,Opening Bank
+,,,110000 Accounts Receivable,3000,,Opening Receivable
+,,,150000 Equipment,2000,,Opening Equipment
+,,,200000 Accounts Payable,,4000,Opening Payable
+,,,300000 Owner's Equity,,16000,Opening Equity
