@@ -41,6 +41,6 @@
         <field name="name">Vendors &amp; Suppliers</field>
         <field name="res_model">res.partner</field>
         <field name="view_mode">kanban,list,form</field>
-        <field name="context">{'search_default_supplier': 1, 'default_supplier_rank': 1}</field>
+        <field name="context">{}</field>
     </record>
 </odoo>

@@ -6,6 +6,16 @@
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
+            <!-- Show the purchase order's current status on its form. -->
+            <xpath expr="//sheet" position="inside">
+                <widget name="web_ribbon" title="RFQ" bg_color="text-bg-secondary" invisible="state != 'draft'"/>
+                <widget name="web_ribbon" title="RFQ Sent" bg_color="text-bg-info" invisible="state != 'sent'"/>
+                <widget name="web_ribbon" title="To Approve" bg_color="text-bg-warning" invisible="state != 'to approve'"/>
+                <widget name="web_ribbon" title="Purchase Order" bg_color="text-bg-success" invisible="state != 'purchase'"/>
+                <widget name="web_ribbon" title="Locked" bg_color="text-bg-primary" invisible="state != 'done'"/>
+                <widget name="web_ribbon" title="Cancelled" bg_color="text-bg-danger" invisible="state != 'cancel'"/>
+            </xpath>
+
             <!-- Smart button linking back to originating Procurement Request -->
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button name="action_view_procurement_request"

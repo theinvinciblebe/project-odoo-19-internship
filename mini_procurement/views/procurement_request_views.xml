@@ -40,6 +40,11 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,rejected"/>
                 </header>
                 <sheet>
+                    <widget name="web_ribbon" title="Draft" bg_color="text-bg-secondary" invisible="state != 'draft'"/>
+                    <widget name="web_ribbon" title="Submitted" bg_color="text-bg-info" invisible="state != 'submitted'"/>
+                    <widget name="web_ribbon" title="Approved" bg_color="text-bg-success" invisible="state != 'approved'"/>
+                    <widget name="web_ribbon" title="Rejected" bg_color="text-bg-danger" invisible="state != 'rejected'"/>
+                    <widget name="web_ribbon" title="Cancelled" bg_color="text-bg-dark" invisible="state != 'cancel'"/>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_view_purchase_order"
                                 type="object"
