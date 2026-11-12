@@ -3,7 +3,7 @@
     <!-- Top-level Root Menu -->
     <menuitem id="menu_mini_procurement_root"
               name="Mini Procurement"
-              web_icon="mini_procurement,static/description/img.png"
+              web_icon="mini_procurement,static/description/icon.png"
               sequence="1"/>
 
     <!-- 1. Operations Menu -->
